@@ -272,6 +272,13 @@ elif [ "$1" == "-r" ]; then
                 purl=$2
         fi
 
+        # TODO: Make this work via passed additional parameters
+        # if passing a cpe pass multiple parameters
+        type=$3
+        # if maven and passing a cpe pass the artifact id as well
+        artifactid=$4
+       
+        
         # Check to see if there is an argument is passed
         if [ -n $purl ] && [ "$verbose" == "true" ]; then
                 echo "Input recieved";
@@ -281,6 +288,8 @@ elif [ "$1" == "-r" ]; then
         fi
 
         if  [[ $( echo $purl | cut -d ':' -f1 ) == 'pkg' ]]; then
+                # if to print out to a file provide the file as the last parameter
+                #file=$3
                 echo "PURL identified "
                 echo "-----------------------------------------------------------------------------"
                 echo $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1)
@@ -303,6 +312,10 @@ elif [ "$1" == "-r" ]; then
                         srcclr lookup --json --coord1 $( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '@' -f1) --type  $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1) --version $( echo $purl | cut -d '@' -f2)
                 fi
         elif [[ $( echo $purl | cut -d ':' -f1 ) == 'cpe' ]]; then
+                # if to print out to a file provide the file as the last parameter
+                type=$3
+                artifactid=$4
+                file=$5
                 if [[ $( echo $purl | cut -d ':' -f2 ) == '2.3' ]]; then
                         echo "CPE Version 2.3 Detected"
                         part=$( echo $purl | cut -d ':' -f3 )
@@ -317,23 +330,30 @@ elif [ "$1" == "-r" ]; then
                         #target_hw=$( echo $purl | cut -d ':' -f12 )
                         #other=$( echo $purl | cut -d ':' -f13 )
                         if [[ "$type" == "maven" ]]; then
-                                srcclr lookup --coord1 $product --coord2 $3 --type $type --version $version --json $5
+                                srcclr lookup --coord1 $product --coord2 $artifactid --type $type --version $version --json $file
                         else
-                                srcclr lookup --coord1 $product --type $type --version $version --json $5
+                                srcclr lookup --coord1 $product --type $type --version $version --json $file
                         fi
                 elif [[ $( echo $purl | cut -d ':' -f2 ) == '/a'  ]]; then
+                        # if to print out to a file provide the file as the last parameter
+                       
                         echo "CPE version 2.2 Detected, Part = Application "
                         part=$( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 )
                         vendor=$( echo $purl | cut -d ':' -f3 )
                         product=$( echo $purl | cut -d ':' -f4 )
                         version=$( echo $purl | cut -d ':' -f5 )
                         update=$( echo $purl | cut -d ':' -f6 )
+                        if [[ "$type" == "maven" ]]; then
+                                srcclr lookup --coord1 $product --coord2 $artifactid --type $type --version $version --json $file
+                        else
+                                srcclr lookup --coord1 $product --type $type --version $version --json $file
+                        fi
                 else
                         part=$( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 )
                         echo "Part found: " $part
                         echo "Lookups can only be done for those of part type Application"
                 fi
-                srcclr lookup --coord1 $1 --coord2 $2 --type $3 --version $4 --json=$5
+                #srcclr lookup --coord1 $1 --coord2 $2 --type $3 --version $4 --json=$5
 
         else
                 echo "Error: PURL expected"
