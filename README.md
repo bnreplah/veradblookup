@@ -1,4 +1,6 @@
-# veradblookup
+# vdblookup
+
+(AKA Vera-DB-Lookup)
 
 > This script is a wrapper around the veraocde SCA Agent based scanner. The Veracode SCA Agent-Based Scanner must be installed and activated prior to using the script.
 > See Requirements: https://docs.veracode.com/r/Setting_Up_Agent_Based_Scans
