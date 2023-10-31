@@ -92,10 +92,10 @@ if [ -z $1 ]; then
     help
 fi
 
-if [ "$1" == "-h" ]; then
+if [ "$1" == "-h" ] || [ "$1" == "--help" ]; then
     echo "Showing help"
     help
-elif [ "$1" == "-p" ]; then
+elif [ "$1" == "-p" ] || [ "$1" == "--prompt" ]; then
     logo
     echo "--------------------------------------------------------------------  Entering Interactive mode -----------------------------------------------------------------------------------"
     echo "Enter the Type / Package Manager. The following are the acceptable options:  [gem, maven, npm, pypi, cocoapods, go, packagist, nuget] "
@@ -177,7 +177,7 @@ elif [ "$1" == "-p" ]; then
 
 # Inline mode
 
-elif [ "$1" == "-i" ]; then
+elif [ "$1" == "-i" ] || [ "$1" == "--inline" ]; then
     shift 1
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
@@ -260,17 +260,22 @@ elif [ "$1" == "-i" ]; then
             echo "[ERROR]: provide a supported type";
         fi
     fi
+#################################################################################
+# Reference Mode
+#################################################################################
 
-elif [ "$1" == "-r" ]; then
-
-        echo "Coordinate Lookup Mode"
+elif [ "$1" == "-r" ] || [ "$1" == "--ref" ]; then
         if [ -z $2 ]; then
-                echo "Please enter a parameter"
-                read purl
+            while [ -z $ref ]; do
+                    echo "Please enter a parameter"
+                    # exit condition:
+                    read ref
+                    
+            done # end while loop
+        # end if block
         else
-
-                purl=$2
-        fi
+            ref=$2
+        fi # end else if block
 
         # TODO: Make this work via passed additional parameters
         # if passing a cpe pass multiple parameters
@@ -280,55 +285,55 @@ elif [ "$1" == "-r" ]; then
        
         
         # Check to see if there is an argument is passed
-        if [ -n $purl ] && [ "$verbose" == "true" ]; then
+        if [ -n $ref ] && [ "$verbose" == "true" ]; then
                 echo "Input recieved";
         # else
         #       echo "Please enter a parameter"
         #       read purl
         fi
 
-        if  [[ $( echo $purl | cut -d ':' -f1 ) == 'pkg' ]]; then
+        if  [[ $( echo $ref | cut -d ':' -f1 ) == 'pkg' ]]; then
                 # if to print out to a file provide the file as the last parameter
                 #file=$3
                 echo "PURL identified "
                 echo "-----------------------------------------------------------------------------"
-                echo $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1)
-                if [ "$(echo $purl | cut -d ':' -f2 | cut -d '/' -f1)" == "maven" ]
+                echo $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1)
+                if [ "$(echo $ref | cut -d ':' -f2 | cut -d '/' -f1)" == "maven" ]
                 then
                         echo "Maven detected"
                         echo "-----------------------------------------------------------------------------"
-                        echo "GroupID or Module: $( echo $purl | cut -d ':' -f2 | cut -d '/' -f2) "
-                        echo "ArtifactID: $( echo $purl | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f1)"
-                        echo "Type: $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1)"
-                        echo "Version: $( echo $purl |  cut -d '@' -f2)"
+                        echo "GroupID or Module: $( echo $ref | cut -d ':' -f2 | cut -d '/' -f2) "
+                        echo "ArtifactID: $( echo $ref | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f1)"
+                        echo "Type: $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1)"
+                        echo "Version: $( echo $ref |  cut -d '@' -f2)"
 
-                        srcclr lookup --coord1 $( echo $purl | cut -d ':' -f2 | cut -d '/' -f2) --coord2 $( echo $purl | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f1) --type $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1) --version $( echo $purl |  cut -d '@' -f2) --json=./SCALookup-Out.json
+                        srcclr lookup --coord1 $( echo $ref | cut -d ':' -f2 | cut -d '/' -f2) --coord2 $( echo $purl | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f1) --type $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1) --version $( echo $purl |  cut -d '@' -f2) --json=./SCALookup-Out.json
                 else
-                        echo "===== $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1) detected ===== "
-                        echo "GroupID or Module: $( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '@' -f1) "
-                        echo "Type: $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1)"
-                        echo "Version: $( echo $purl | cut -d '@' -f2)"
+                        echo "===== $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1) detected ===== "
+                        echo "GroupID or Module: $( echo $ref | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '@' -f1) "
+                        echo "Type: $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1)"
+                        echo "Version: $( echo $ref | cut -d '@' -f2)"
 
-                        srcclr lookup --json --coord1 $( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '@' -f1) --type  $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1) --version $( echo $purl | cut -d '@' -f2)
+                        srcclr lookup --json --coord1 $( echo $ref | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '@' -f1) --type  $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1) --version $( echo $purl | cut -d '@' -f2)
                 fi
-        elif [[ $( echo $purl | cut -d ':' -f1 ) == 'cpe' ]]; then
+        elif [[ $( echo $ref | cut -d ':' -f1 ) == 'cpe' ]]; then
                 # if to print out to a file provide the file as the last parameter
                 type=$3
                 artifactid=$4
                 file=$5
-                if [[ $( echo $purl | cut -d ':' -f2 ) == '2.3' ]]; then
+                if [[ $( echo $ref | cut -d ':' -f2 ) == '2.3' ]]; then
                         echo "CPE Version 2.3 Detected"
-                        part=$( echo $purl | cut -d ':' -f3 )
-                        vendor=$( echo $purl | cut -d ':' -f4 )
-                        product=$( echo $purl | cut -d ':' -f5 )
-                        version=$( echo $purl | cut -d ':' -f6 )
-                        update=$( echo $purl | cut -d ':' -f7 )
-                        #edition=$( echo $purl | cut -d ':' -f8 )
-                        #language=$( echo $purl | cut -d ':' -f9 )
-                        #sw_edition=$( echo $purl | cut -d ':' -f10 )
-                        #target_sw=$( echo $purl | cut -d ':' -f11 )
-                        #target_hw=$( echo $purl | cut -d ':' -f12 )
-                        #other=$( echo $purl | cut -d ':' -f13 )
+                        part=$( echo $ref | cut -d ':' -f3 )
+                        vendor=$( echo $ref | cut -d ':' -f4 )
+                        product=$( echo $ref | cut -d ':' -f5 )
+                        version=$( echo $ref | cut -d ':' -f6 )
+                        update=$( echo $ref | cut -d ':' -f7 )
+                        #edition=$( echo $ref | cut -d ':' -f8 )
+                        #language=$( echo $ref | cut -d ':' -f9 )
+                        #sw_edition=$( echo $ref | cut -d ':' -f10 )
+                        #target_sw=$( echo $ref | cut -d ':' -f11 )
+                        #target_hw=$( echo $ref | cut -d ':' -f12 )
+                        #other=$( echo $ref | cut -d ':' -f13 )
                         if [[ "$type" == "maven" ]]; then
                                 srcclr lookup --coord1 $product --coord2 $artifactid --type $type --version $version --json $file
                         else
@@ -338,18 +343,18 @@ elif [ "$1" == "-r" ]; then
                         # if to print out to a file provide the file as the last parameter
                        
                         echo "CPE version 2.2 Detected, Part = Application "
-                        part=$( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 )
-                        vendor=$( echo $purl | cut -d ':' -f3 )
-                        product=$( echo $purl | cut -d ':' -f4 )
-                        version=$( echo $purl | cut -d ':' -f5 )
-                        update=$( echo $purl | cut -d ':' -f6 )
+                        part=$( echo $ref | cut -d ':' -f2 | cut -d '/' -f2 )
+                        vendor=$( echo $ref | cut -d ':' -f3 )
+                        product=$( echo $ref | cut -d ':' -f4 )
+                        version=$( echo $ref | cut -d ':' -f5 )
+                        update=$( echo $ref | cut -d ':' -f6 )
                         if [[ "$type" == "maven" ]]; then
                                 srcclr lookup --coord1 $product --coord2 $artifactid --type $type --version $version --json $file
                         else
                                 srcclr lookup --coord1 $product --type $type --version $version --json $file
                         fi
                 else
-                        part=$( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 )
+                        part=$( echo $pref | cut -d ':' -f2 | cut -d '/' -f2 )
                         echo "Part found: " $part
                         echo "Lookups can only be done for those of part type Application"
                 fi
@@ -358,6 +363,9 @@ elif [ "$1" == "-r" ]; then
         else
                 echo "Error: PURL expected"
         fi
-
-
+#################################################################################
+# CVE search
+#################################################################################
+elif [ "$1" == "-c" ]; then
+    curl "https://api.sourceclear.com/catalog/search?q=$2"
 fi
