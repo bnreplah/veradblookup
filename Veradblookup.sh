@@ -1,15 +1,14 @@
 #!/bin/bash
 
-versioninfo="v2.0.1"
+versioninfo="v2.0.2"
 verbose=true
 clearprompt=true
 
 function versioninfo {
     echo "--------------------------------------------"
     echo "Version:" $versioninfo
-    echo "Author: Ben Halpern - Veracode CSE "
-    echo "License information for this tool: https://github.com/bnreplah/Veracode-scripts/blob/main/LICENSE"
-    echo "Veracode Databse Lookup Wrapper $versioninfo"
+    echo "Author: Ben Halpern - CSE "
+    echo "License information found: https://github.com/bnreplah/Veracode-scripts/blob/main/LICENSE"
 }
 
 
@@ -82,39 +81,21 @@ function help {
     echo "PURL CPE Lookup [Experimental]"
     echo "--------------------------------------------"
     echo "veradblookup -r <PURL>";
-#    echo "veradblookup -r <CPE> <Package Manager/Type> [Experimental]";
-#    echo "veradblookup -r <ref> [Experimental]";
-#    echo ""
-#    echo "SBOM Functions [Experimental]"
-#    echo "---------------------------------------------"
-#    echo "veradblookup -s <SBOM File>       : Parse SBOM file and produce report to the stdout"
-#    echo "veradblookup -s <SBOM File> -o <outputfile>.txt   : Parse SBOM file and produce report to output file"
-#    echo "veradblookup -s <SBOM File> -oS <Out SBOM File>   : Parse SBOM file and populate VEX data"
-#    echo "veradblookup -s <SBOM File> <Second SBOM File>    : Combine 2 SBOMS"
-#    echo "veradblookup -s <SBOM File> --generate-full       : Generates a Full SBOM based of the component information provided from the platform" 
+    echo "veradblookup -r <CPE> <Package Manager/Type> [Experimental]";
+    echo "veradblookup -r <ref> [Experimental]";
 
 
-}   
+}
 
-#################################################################################
-# If no parameters are passed
-#################################################################################
 echo "Veracode DB Look Up Tool"
 if [ -z $1 ]; then
     help
-fi # end if block
+fi
 
-#################################################################################
-# if -h or --help or help is passed as the first argument
-#################################################################################
-if [ "$1" == "-h" ] || [ "$1" == "--help" ] ; then
+if [ "$1" == "-h" ]; then
     echo "Showing help"
     help
-# end if block
-#################################################################################
-# Prompt Mode
-#################################################################################    
-elif [ "$1" == "-p" ] || [ "$1" == "--prompt" ]; then
+elif [ "$1" == "-p" ]; then
     logo
     echo "--------------------------------------------------------------------  Entering Interactive mode -----------------------------------------------------------------------------------"
     echo "Enter the Type / Package Manager. The following are the acceptable options:  [gem, maven, npm, pypi, cocoapods, go, packagist, nuget] "
@@ -124,7 +105,7 @@ elif [ "$1" == "-p" ] || [ "$1" == "--prompt" ]; then
     echo "Read " $collector
     if [ "$clearprompt" == "true" ]; then
         clear
-    fi # end if block
+    fi
     echo "Enter the primary library or groupId. This is the primary library name in all cases except for type maven, where the first coordinate identifies the groupId in Maven nomenclature."
     echo "The case sensitivity of the namespace depends on whether the underlying registry distinguishes packages by case."
     echo "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
@@ -134,7 +115,7 @@ elif [ "$1" == "-p" ] || [ "$1" == "--prompt" ]; then
     #clear
     if [ "$clearprompt" == "true" ]; then
          clear
-    fi # end if block
+    fi
 
     if [ "$collector" == "maven" ]; then
         echo "Enter the maven artifactId. This specifies the artifactId of the library to lookup. "
@@ -142,7 +123,7 @@ elif [ "$1" == "-p" ] || [ "$1" == "--prompt" ]; then
         echo "Your Input [Artifact ID]:> "
         read artifactid
         echo "Read " $artifactid
-    fi # end if block
+    fi
     echo "[Optional] Enter the platform, otherwise press enter: "
     echo "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
     echo "Your input [Platform]:> "
@@ -151,7 +132,7 @@ elif [ "$1" == "-p" ] || [ "$1" == "--prompt" ]; then
     #clear
     if [ "$clearprompt" == "true" ]; then
          clear
-    fi # end if block
+    fi
     echo "Enter the library version. The version number, as specified in the registry that you identify with the type, of the library to lookup. "
     echo "-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------"
     echo "Your Input [Version]:>"
@@ -159,7 +140,7 @@ elif [ "$1" == "-p" ] || [ "$1" == "--prompt" ]; then
     echo "Read " $version
     if [ "$clearprompt" == "true" ]; then
          clear
-    fi # end if block
+    fi
 
     if [ "$collector" == "maven" ]; then
         echo "Maven detected "
@@ -175,7 +156,6 @@ elif [ "$1" == "-p" ] || [ "$1" == "--prompt" ]; then
            echo "srcclr lookup --type="$collector" --coord1="$namespace" --coord2="$artifactid"  --version="$version" --json"
            srcclr lookup --type=$collector --coord1=$namespace --coord2=$artifactid --version=$version --json
  #       fi
-    # end if block
     elif [ "$collector" == "gem" || "$collector" == "npm" || "$collector" == "pypi" || "$collector" == "cocoapods" || "$collector" == "go" || "$collector" == "packagist" ]; then
         echo "$collector detected "
         echo "-----------------------------------------------------------------------------"
@@ -190,16 +170,14 @@ elif [ "$1" == "-p" ] || [ "$1" == "--prompt" ]; then
            echo "srcclr lookup --json --coord1="$namespace" --type="$collector" --version=" $version
            srcclr lookup --json --type=$collector --coord1=$namespace --version=$version
 #        fi
-    # end elif block
     else
         echo "[Error] Incorrect Syntax"
         help
-    fi    # end else elif if block
+    fi
 
-#################################################################################
-# Inline Mode
-#################################################################################
-elif [ "$1" == "-i" ] || [ "$1" == "--inline" ]; then
+# Inline mode
+
+elif [ "$1" == "-i" ]; then
     shift 1
     # Parse command line arguments
     while [[ $# -gt 0 ]]; do
@@ -245,12 +223,11 @@ elif [ "$1" == "-i" ] || [ "$1" == "--inline" ]; then
                 exit 1
                 ;;
         esac
-    done # end case block
+    done
 
     if [ -z $type ]  && [ -z $namespace ] && [ -z $version  ]; then
         echo "[ERROR] Please provide a parameter";
         help;
-    # end if block
     else
         if [ -n $type ] && [ "$type" == "maven" ]; then
             if [ -n $artifactid ]; then
@@ -261,12 +238,10 @@ elif [ "$1" == "-i" ] || [ "$1" == "--inline" ]; then
                     echo "srcclr lookup --type $type --coord1 $namespace --coord2 $artifactid --version $version --json";
                     srcclr lookup --type $type --coord1 $namespace --coord2 $artifactid --version $version --json;
 #                fi
-            # end if block
             else
                 echo "[ERROR] Artifact ID is required with the type maven"
                 help
-            fi # end else if block
-        # end if block
+            fi
         elif [ -n $type ] && [ "$type" == "gem" || "$type" == "npm" || "$type" == "pypi" || "$type" == "cocoapods" || "$type" == "go" || "$type" == "packagist" ]; then
             if [ -n $artifactid ]; then
 #                if [ -n $platform ]  && [ "$platform" != " " ]; then
@@ -276,132 +251,93 @@ elif [ "$1" == "-i" ] || [ "$1" == "--inline" ]; then
                     echo "srcclr lookup --type $type --coord1 $namespace --coord2 $artifactid --version $version --json";
                     srcclr lookup --type $type --coord1 $namespace --coord2 $artifactid --version $version --json;
 #                fi
-            # end if block
             else
                 echo "srcclr lookup --type $type --coord1 $namespace --version $version --json";
                 srcclr lookup --type $type --coord1 $namespace --version $version --json;
-            fi    # end else if block
-        # end elif block
+            fi
         else
 
             echo "[ERROR]: provide a supported type";
-        fi # end else elif if block
-    fi # end else if block
-#################################################################################
-# Reference Mode
-#################################################################################
-elif [ "$1" == "-r" ] || [ "$1" == "--ref" ]; then
+        fi
+    fi
+
+elif [ "$1" == "-r" ]; then
+
+        echo "Coordinate Lookup Mode"
         if [ -z $2 ]; then
-            while [ -z $ref ]; do
-                    echo "Please enter a parameter"
-                    # exit condition:
-                    read ref
-                    
-            done # end while loop
-        # end if block
+                echo "Please enter a parameter"
+                read purl
         else
-            ref=$2
-        fi # end else if block
 
-       
-        echo "ref lookup mode"
+                purl=$2
+        fi
 
-        # Could also use just pass verbose and leave blank to minimize
-        # if ref is not null and verbose is true
         # Check to see if there is an argument is passed
-        if [ -n $ref ] && [ "$verbose" == "true" ]; then
+        if [ -n $purl ] && [ "$verbose" == "true" ]; then
                 echo "Input recieved";
-        fi # end if block
+        # else
+        #       echo "Please enter a parameter"
+        #       read purl
+        fi
 
-        # If Debug is set/equal to true
-        if $DEBUG; then
-            echo $ref_header
-            if [ "$ref_header" == "cpe" ]; then
-                echo "CPE"
-            elif [ "$ref_header" == "pkg" ]; then
-                echo "PURL"
-            else
-                echo "ref"
-            fi # end else elif if block
-        fi # end if block
-        
-        # Checkes to see the first values of the reference coordinate format
-        # if the first field is pkg then it is the purl signature
-        if  [ $( echo $ref | cut -d ':' -f1 ) == 'pkg' ]
-        then
-           #################################################################################
-           # PURL Mode
-           #################################################################################
-            
-            echo "PURL"
-            type=$(echo $ref | cut -d ':' -f2 | cut -d '/' -f1) 
-            namespace=$( echo $ref | cut -d ':' -f2 | cut -d '/' -f2)
-            name=$( echo $ref | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f1)
-            version=$( echo $ref | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f2)
-            vendor=$(echo $ref | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '.' -f2)	
-            echo "cpe:2.3:a:"$vendor":"$name":"$version":*:*:*:*:*:*:*"
-            echo "cpa:/a:"$vendor":"$name":"$version  
-            #srcclr lookup --coord1 $namespace --coord2 $name --type $type --version $version --json
-            if  [[ $( echo $ref | cut -d ':' -f1 ) == 'pkg' ]]; then
+        if  [[ $( echo $purl | cut -d ':' -f1 ) == 'pkg' ]]; then
                 echo "PURL identified "
                 echo "-----------------------------------------------------------------------------"
-                echo $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1)
-                if [ "$(echo $ref | cut -d ':' -f2 | cut -d '/' -f1)" == "maven" ]
+                echo $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1)
+                if [ "$(echo $purl | cut -d ':' -f2 | cut -d '/' -f1)" == "maven" ]
                 then
                         echo "Maven detected"
                         echo "-----------------------------------------------------------------------------"
-                        echo "GroupID or Module: $( echo $ref | cut -d ':' -f2 | cut -d '/' -f2) "
-                        echo "ArtifactID: $( echo $ref | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f1)"
-                        echo "Type: $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1)"
-                        echo "Version: $( echo $ref |  cut -d '@' -f2)"
+                        echo "GroupID or Module: $( echo $purl | cut -d ':' -f2 | cut -d '/' -f2) "
+                        echo "ArtifactID: $( echo $purl | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f1)"
+                        echo "Type: $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1)"
+                        echo "Version: $( echo $purl |  cut -d '@' -f2)"
 
-                        srcclr lookup --coord1 $( echo $ref | cut -d ':' -f2 | cut -d '/' -f2) --coord2 $( echo $ref | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f1) --type $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1) --version $( echo $ref |  cut -d '@' -f2) --json=./SCALookup-Out.json
-                # end if block
+                        srcclr lookup --coord1 $( echo $purl | cut -d ':' -f2 | cut -d '/' -f2) --coord2 $( echo $purl | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f1) --type $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1) --version $( echo $purl |  cut -d '@' -f2) --json=./SCALookup-Out.json
                 else
-                        echo "===== $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1) detected ===== "
-                        echo "GroupID or Module: $( echo $ref | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '@' -f1) "
-                        echo "Type: $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1)"
-                        echo "Version: $( echo $ref | cut -d '@' -f2)"
+                        echo "===== $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1) detected ===== "
+                        echo "GroupID or Module: $( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '@' -f1) "
+                        echo "Type: $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1)"
+                        echo "Version: $( echo $purl | cut -d '@' -f2)"
 
-                        srcclr lookup --json --coord1 $( echo $ref | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '@' -f1) --type  $(echo $ref | cut -d ':' -f2 | cut -d '/' -f1) --version $( echo $ref | cut -d '@' -f2)
-                fi # end else if block
-            fi # end if block
-        # end if block
-        # if the first portion of the reference is cpe then it is a cpe signature
-        elif [ $( echo $ref | cut -d ':' -f1 ) == "cpe" ]; then
-           #################################################################################
-           # CPE Mode
-           #################################################################################
-        
-            type=$3
-            echo "CPE"
-            namespace=$(echo $ref | cut -d ':' -f4)
-            name=$(echo $ref | cut -d ':' -f5)
-            version=$(echo $ref |cut -d ':' -f6)
-            srcclr lookup --coord1 $namespace --coord2 $name --type $type --version $version --json        
-        # end ELIF
-        # Otherwise it is a generic ref type
-        # Other additional ref types can be added as additional elif statements here
+                        srcclr lookup --json --coord1 $( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '@' -f1) --type  $(echo $purl | cut -d ':' -f2 | cut -d '/' -f1) --version $( echo $purl | cut -d '@' -f2)
+                fi
+        elif [[ $( echo $purl | cut -d ':' -f1 ) == 'cpe' ]]; then
+                if [[ $( echo $purl | cut -d ':' -f2 ) == '2.3' ]]; then
+                        echo "CPE Version 2.3 Detected"
+                        part=$( echo $purl | cut -d ':' -f3 )
+                        vendor=$( echo $purl | cut -d ':' -f4 )
+                        product=$( echo $purl | cut -d ':' -f5 )
+                        version=$( echo $purl | cut -d ':' -f6 )
+                        update=$( echo $purl | cut -d ':' -f7 )
+                        #edition=$( echo $purl | cut -d ':' -f8 )
+                        #language=$( echo $purl | cut -d ':' -f9 )
+                        #sw_edition=$( echo $purl | cut -d ':' -f10 )
+                        #target_sw=$( echo $purl | cut -d ':' -f11 )
+                        #target_hw=$( echo $purl | cut -d ':' -f12 )
+                        #other=$( echo $purl | cut -d ':' -f13 )
+                        if [[ "$type" == "maven" ]]; then
+                                srcclr lookup --coord1 $product --coord2 $3 --type $type --version $version --json $5
+                        else
+                                srcclr lookup --coord1 $product --type $type --version $version --json $5
+                        fi
+                elif [[ $( echo $purl | cut -d ':' -f2 ) == '/a'  ]]; then
+                        echo "CPE version 2.2 Detected, Part = Application "
+                        part=$( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 )
+                        vendor=$( echo $purl | cut -d ':' -f3 )
+                        product=$( echo $purl | cut -d ':' -f4 )
+                        version=$( echo $purl | cut -d ':' -f5 )
+                        update=$( echo $purl | cut -d ':' -f6 )
+                else
+                        part=$( echo $purl | cut -d ':' -f2 | cut -d '/' -f2 )
+                        echo "Part found: " $part
+                        echo "Lookups can only be done for those of part type Application"
+                fi
+                srcclr lookup --coord1 $1 --coord2 $2 --type $3 --version $4 --json=$5
+
         else
+                echo "Error: PURL expected"
+        fi
 
-            #################################################################################
-            # REF Coordinate Mode
-            #################################################################################
-            echo "Attempting to look up the reference coordinates"
-            echo "Type: $(echo $ref | cut -d ':' -f1 )"
-            echo "GroupID or Module: $( echo $ref | cut -d ':' -f2 )"
-            if [ "$(echo $ref | cut -d ':' -f1 )" == "maven" ]; then
-                echo "Artifact Id: $( echo $ref | cut -d ':' -f3 )" 
-                echo "Version: $( echo $ref | cut -d ':' -f4)"
-            # end if block
-            else 
-                echo "Version: $( echo $ref | cut -d ':' -f3)"
-            fi # end else if block
-        fi # end else if block
-#################################################################################
-# CVE search
-#################################################################################
-elif [ "$1" == "-c" ]; then
-    curl "https://api.sourceclear.com/catalog/search?q=$2"
-        
+
 fi
