@@ -329,6 +329,9 @@ elif [ "$1" == "-r" ] || [ "$1" == "--ref" ]; then
         # if the first field is pkg then it is the purl signature
         if  [ $( echo $ref | cut -d ':' -f1 ) == 'pkg' ]
         then
+           #################################################################################
+           # PURL Mode
+           #################################################################################
             
             echo "PURL"
             type=$(echo $ref | cut -d ':' -f2 | cut -d '/' -f1) 
@@ -366,6 +369,10 @@ elif [ "$1" == "-r" ] || [ "$1" == "--ref" ]; then
         # end if block
         # if the first portion of the reference is cpe then it is a cpe signature
         elif [ $( echo $ref | cut -d ':' -f1 ) == "cpe" ]; then
+           #################################################################################
+           # CPE Mode
+           #################################################################################
+        
             type=$3
             echo "CPE"
             namespace=$(echo $ref | cut -d ':' -f4)
@@ -376,6 +383,10 @@ elif [ "$1" == "-r" ] || [ "$1" == "--ref" ]; then
         # Otherwise it is a generic ref type
         # Other additional ref types can be added as additional elif statements here
         else
+
+            #################################################################################
+            # REF Coordinate Mode
+            #################################################################################
             echo "Attempting to look up the reference coordinates"
             echo "Type: $(echo $ref | cut -d ':' -f1 )"
             echo "GroupID or Module: $( echo $ref | cut -d ':' -f2 )"
