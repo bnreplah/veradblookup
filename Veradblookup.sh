@@ -399,9 +399,9 @@ elif [ "$1" == "-r" ] || [ "$1" == "--ref" ]; then
             fi # end else if block
         fi # end else if block
 #################################################################################
-# CVE search
+# search
 #################################################################################
-elif [ "$1" == "-c" ]; then
+elif [ "$1" == "-q" ]; then
     curl "https://api.sourceclear.com/catalog/search?q=$2"
         
 fi
