@@ -17,3 +17,8 @@ In order to utilize the script, the bash script simply needs to be placed on a s
 > The goal is for future versions to check the system and see if python is installed, see if docker is enabled, and see if java is installed to check that the system meets the requirements for use.
 
 ## Usage ##
+
+`--help` to see the help menu
+
+
+## Development is done in Veracode Scripts repo ##
