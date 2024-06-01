@@ -22,3 +22,4 @@ In order to utilize the script, the bash script simply needs to be placed on a s
 
 
 ## Development is done in Veracode Scripts repo ##
+[Veracode DBLookup](https://github.com/bnreplah/Veracode-scripts/tree/main/Scripts/Dev/DBlookup)
