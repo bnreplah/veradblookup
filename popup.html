@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Search Extension</title>
+  <style>
+    body{
+        background-color: azure;
+        position: relative;
+        
+
+    }
+    header{
+        background-color:#202528;
+        min-width:max-content;
+        width:500px;
+        padding:5px;
+        margin-bottom: 5px;
+
+
+    }
+    #searchButton{
+        border-radius: 5%;
+
+    }
+    #searchInput{
+        background-color: black;
+        color: lightblue;
+        border: none;
+        width:500px;
+    }
+    #searchInput:hover{
+        background-color:rgb(3, 89, 142) ;
+        color:white;
+    }
+  </style>
+</head>
+<body>
+    <header><div style="background-color:#202528; color: white; flex:auto;  position:relative; "><img style="width:200px;" src="icon2.png">VulnerabilitySearch</div></header>
+  
+  <input type="text" id="searchInput" placeholder="Enter your search query">
+  <button id="searchButton">Search</button>
+  <script src="popup.js"></script>
+</body>
+</html>
