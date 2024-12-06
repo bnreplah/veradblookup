@@ -340,7 +340,7 @@ elif [ "$1" == "-r" ] || [ "$1" == "--ref" ]; then
             version=$( echo $ref | cut -d ':' -f2 | cut -d '/' -f3 | cut -d '@' -f2)
             vendor=$(echo $ref | cut -d ':' -f2 | cut -d '/' -f2 | cut -d '.' -f2)	
             echo "cpe:2.3:a:"$vendor":"$name":"$version":*:*:*:*:*:*:*"
-            echo "cpa:/a:"$vendor":"$name":"$version  
+            echo "cpe:/a:"$vendor":"$name":"$version  
             #srcclr lookup --coord1 $namespace --coord2 $name --type $type --version $version --json
             if  [[ $( echo $ref | cut -d ':' -f1 ) == 'pkg' ]]; then
                 echo "PURL identified "
